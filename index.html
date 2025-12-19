@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>การ์ดคริสต์มาสสำหรับคนพิเศษ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg1:#0f1624; --bg2:#2b3340; --accent:#e53935; --card-bg:#fffaf5; --muted:#6b6b6b;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:'Sarabun',system-ui,-apple-system,Segoe UI,Roboto,'Noto Sans Thai',sans-serif}
+    body{
+      display:flex;align-items:center;justify-content:center;
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(255,255,255,0.03), transparent),
+                  linear-gradient(180deg,var(--bg1),var(--bg2));
+      color:#222;overflow:hidden;padding:40px;
+    }
+
+    /* soft glow stars */
+    .stars{position:fixed;inset:0;pointer-events:none;background-image:radial-gradient(white 1px, transparent 1px);background-size:50px 50px;opacity:0.06}
+
+    .container{width:min(900px,95vw)}
+
+    .card-wrapper{perspective:1400px}
+    .card{
+      width:100%;max-width:820px;height:460px;margin:0 auto;position:relative;transform-style:preserve-3d;transition:transform .9s cubic-bezier(.2,.9,.3,1);
+      cursor:pointer;border-radius:18px;
+    }
+    .card.open{transform:rotateY(-180deg)}
+
+
+
+
+
+
+
+
+      /* mini sparkles */
+      .mini-sparkle{position:absolute;width:8px;height:8px;border-radius:50%;pointer-events:none;opacity:0.95;transform-origin:center;mix-blend-mode:screen}
+      @keyframes sparkle-up{0%{transform:translateY(0) scale(0.6);opacity:1}60%{opacity:1}100%{transform:translateY(-120px) scale(0.2);opacity:0}}
+      .title{position:relative}
+      .title.glow{filter:drop-shadow(0 6px 16px rgba(255,107,107,0.18))}
+    /* inside */
+    .inside{transform:rotateY(180deg);display:flex;background:linear-gradient(90deg,#fffaf5 0%, #fff 100%)}
+    .inside .visual{width:48%;background-image:url('1.jpg');background-size:cover;background-position:center}
+    .inside .content{width:52%;padding:36px;display:flex;flex-direction:column;justify-content:center;color:#3b2d2a}
+    .inside h1{margin:0 0 10px 0;color:var(--accent);font-size:32px}
+    .inside p{margin:0;font-size:18px;line-height:1.6;color:#4b3b35}
+    .from{margin-top:18px;text-align:right;font-style:italic;color:#6b6b6b}
+
+    /* toggle button */
+    .controls{display:flex;gap:10px;justify-content:center;margin-top:18px}
+    .btn{background:transparent;border:2px solid rgba(255,255,255,0.12);padding:10px 16px;border-radius:999px;color:#fff;backdrop-filter: blur(6px);cursor:pointer}
+    .btn.primary{background:linear-gradient(90deg,var(--accent),#ff6f61);border:none;color:#fff;font-weight:600}
+
+    /* small interactions */
+    .card:hover{transform:translateY(-6px)}
+
+    /* responsive */
+    @media (max-width:800px){
+      .card{height:520px}
+      .inside{flex-direction:column}
+      .inside .visual,.inside .content{width:100%;height:50%}
+      .front .title{font-size:28px}
+    }
+
+    /* snow - simple DOM-based flakes */
+    .flake{position:fixed;top:-10px;z-index:50;pointer-events:none;color:#fff;opacity:.9;font-size:12px;will-change:transform;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3))}
+  </style>
+</head>
+<body>
+
+  <div class="stars" aria-hidden="true"></div>
+
+  <div class="container">
+    <div class="card-wrapper">
+      <div class="card" id="card" role="button" aria-pressed="false" tabindex="0">
+
+        <div class="side front" aria-hidden="false">
+          <div class="title">สุขสันต์วันคริสต์มาส</div>
+          <div class="subtitle">ของขวัญที่ดีที่สุด คือเวลาและความทรงจำด้วยกัน</div>
+          <div class="hint">คลิกหรือกดปุ่มเพื่อเปิดการ์ด 🎄</div>
+        </div>
+
+        <div class="side inside" aria-hidden="true">
+          <div class="visual"></div>
+          <div class="content">
+            <h1>ถึงคนพิเศษ</h1>
+            <p>
+              ดีใจที่มีมึงเป็นเพื่อนนะ ขอให้คริสต์มาสปีนี้มีแต่รอยยิ้ม ความสุข และขอให้ปีหน้าเป็นปีที่ดีของเราทั้งคู่ รักมึงนะ ❤️
+            </p>
+            <div class="from">ด้วยรัก จากฉัน</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="controls" aria-hidden="false">
+        <button class="btn" id="toggleBtn">เปิด/ปิดการ์ด</button>
+        <button class="btn primary" id="giftBtn">ส่งความรัก</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Toggle card
+    const card = document.getElementById('card');
+    const toggleBtn = document.getElementById('toggleBtn');
+    const giftBtn = document.getElementById('giftBtn');
+    function setOpen(open){
+      card.classList.toggle('open', open);
+      card.setAttribute('aria-pressed', open?'true':'false');
+      const inside = card.querySelector('.inside');
+      const front = card.querySelector('.front');
+      inside.setAttribute('aria-hidden', open? 'false' : 'true');
+      front.setAttribute('aria-hidden', open? 'true' : 'false');
+      if(open){
+        try{ playChime() }catch(e){}
+        try{ createSparkles(18,'#fff7a8') }catch(e){}
+      }
+    }
+    card.addEventListener('click', ()=> setOpen(!card.classList.contains('open')));
+    toggleBtn.addEventListener('click', ()=> setOpen(!card.classList.contains('open')));
+    giftBtn.addEventListener('click', ()=>{
+      setOpen(true);
+      try{ playChime() }catch(e){}
+      try{ createSparkles(32,'#ffd166') }catch(e){}
+      giftBtn.textContent = 'ส่งแล้ว 🎁';
+      giftBtn.disabled = true;
+    });
+    card.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' ') setOpen(!card.classList.contains('open')) });
+
+    // Simple snowflakes using DOM elements
+    const flakes = 40;
+    for(let i=0;i<flakes;i++){
+      const el = document.createElement('div');
+      el.className='flake';
+      el.style.left = Math.random()*100 + 'vw';
+      el.style.opacity = (0.3 + Math.random()*0.7).toFixed(2);
+      const size = 8 + Math.random()*14;
+      el.style.fontSize = size + 'px';
+      el.textContent = '❄';
+      const duration = 8 + Math.random()*12;
+      el.style.transition = 'transform '+duration+'s linear';
+      document.body.appendChild(el);
+      // kickoff animation after slight delay
+      requestAnimationFrame(()=>{
+        const x = (Math.random()*30 - 15);
+        el.style.transform = `translate3d(${x}vw, 110vh, 0) rotate(${Math.random()*720}deg)`;
+      });
+      // reset loop
+      (function loop(el, duration){
+        setTimeout(()=>{
+          el.style.transition = 'none';
+          el.style.top = '-10px';
+          el.style.transform = 'translate3d(0,0,0)';
+          el.style.left = Math.random()*100 + 'vw';
+          // next frame reapply transition
+          requestAnimationFrame(()=>{
+            const x = (Math.random()*30 - 15);
+            el.style.transition = 'transform '+duration+'s linear';
+            el.style.transform = `translate3d(${x}vw, 110vh, 0) rotate(${Math.random()*720}deg)`;
+          });
+          loop(el, 6 + Math.random()*14);
+        }, (6+Math.random()*12)*1000);
+      })(el, 8 + Math.random()*12);
+    
+      // play a short chime using WebAudio
+      function playChime(){
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if(!AudioCtx) return;
+        const ctx = new AudioCtx();
+        const now = ctx.currentTime;
+        const o = ctx.createOscillator(); const g = ctx.createGain();
+        o.type = 'sine'; o.frequency.setValueAtTime(880, now);
+        g.gain.setValueAtTime(0.0001, now);
+        g.gain.linearRampToValueAtTime(0.12, now + 0.01);
+        g.gain.exponentialRampToValueAtTime(0.0001, now + 1.2);
+        o.connect(g); g.connect(ctx.destination);
+        o.start(now); o.stop(now + 1.2);
+        const o2 = ctx.createOscillator(); const g2 = ctx.createGain();
+        o2.type = 'triangle'; o2.frequency.setValueAtTime(1320, now);
+        g2.gain.setValueAtTime(0.0001, now);
+        g2.gain.linearRampToValueAtTime(0.06, now + 0.02);
+        g2.gain.exponentialRampToValueAtTime(0.0001, now + 1.4);
+        o2.connect(g2); g2.connect(ctx.destination);
+        o2.start(now); o2.stop(now + 1.4);
+      }
+
+      // create sparkles inside the card (temporary elements)
+      function createSparkles(count=16, color='#ffd166'){
+        const rect = card.getBoundingClientRect();
+        const container = document.createElement('div');
+        container.style.position = 'absolute'; container.style.left = 0; container.style.top = 0;
+        container.style.width = '100%'; container.style.height = '100%'; container.style.pointerEvents = 'none';
+        container.style.overflow = 'visible';
+        card.appendChild(container);
+        for(let i=0;i<count;i++){
+          const s = document.createElement('div');
+          s.className = 'mini-sparkle';
+          s.style.background = color;
+          // random start near center
+          const startX = rect.width*0.35 + Math.random()*rect.width*0.3;
+          const startY = rect.height*0.35 + Math.random()*rect.height*0.2;
+          s.style.left = startX + 'px'; s.style.top = startY + 'px';
+          s.style.width = (6 + Math.random()*10) + 'px';
+          s.style.height = s.style.width;
+          container.appendChild(s);
+          const dx = (Math.random()-0.5) * 120;
+          const dy = -(60 + Math.random()*140);
+          const rot = Math.random()*360;
+          s.animate([
+            { transform: `translate(0px,0px) rotate(0deg) scale(1)`, opacity: 1 },
+            { transform: `translate(${dx}px, ${dy}px) rotate(${rot}deg) scale(0.2)`, opacity: 0 }
+          ], { duration: 700 + Math.random()*900, easing: 'cubic-bezier(.2,.8,.2,1)' });
+        }
+        setTimeout(()=>{ container.remove() }, 2000);
+      }
+    }
+  </script>
+
+</body>
+</html>    .front .hint{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);color:#9e9e9e;font-size:14px}    .front .subtitle{margin-top:8px;color:var(--muted);font-weight:400}    .front .title{font-size:44px;font-weight:700;letter-spacing:0.6px}    .front{display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#fff 0%, #fff7f2 60%);color:var(--accent)}
+    /* front */    .side{position:absolute;inset:0;border-radius:18px;overflow:hidden;backface-visibility:hidden;box-shadow:0 30px 60px rgba(2,6,23,0.6)}
