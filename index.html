@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>การ์ดคริสต์มาสสำหรับคนพิเศษ</title>
+  <meta name="theme-color" content="#0f1624">
+  <meta property="og:title" content="การ์ดคริสต์มาสสำหรับคนพิเศษ">
+  <meta property="og:description" content="ส่งความปรารถนาดีในวันคริสต์มาส — การ์ดอินเตอร์แอคทีฟที่ทำงานบนมือถือและเดสก์ท็อป">
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
   <style>
     :root{
@@ -29,13 +32,15 @@
       cursor:pointer;border-radius:18px;
     }
     .card.open{transform:rotateY(-180deg)}
+    .card.open:hover{transform:translateY(-6px) rotateY(-180deg)}
 
+    .side{position:absolute;inset:0;border-radius:18px;overflow:hidden;backface-visibility:hidden;box-shadow:0 30px 60px rgba(2,6,23,0.6)}
 
-
-
-
-
-
+    /* front */
+    .front{display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#fff 0%, #fff7f2 60%);color:var(--accent)}
+    .front .title{font-size:44px;font-weight:700;letter-spacing:0.6px}
+    .front .subtitle{margin-top:8px;color:var(--muted);font-weight:400}
+    .front .hint{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);color:#9e9e9e;font-size:14px}
 
       /* mini sparkles */
       .mini-sparkle{position:absolute;width:8px;height:8px;border-radius:50%;pointer-events:none;opacity:0.95;transform-origin:center;mix-blend-mode:screen}
@@ -74,6 +79,10 @@
 
   <div class="stars" aria-hidden="true"></div>
 
+  <noscript>
+    <div style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);color:#fff;padding:18px;font-size:18px;z-index:9999">โปรดเปิดใช้งาน JavaScript เพื่อดูการ์ดนี้</div>
+  </noscript>
+
   <div class="container">
     <div class="card-wrapper">
       <div class="card" id="card" role="button" aria-pressed="false" tabindex="0">
@@ -109,6 +118,7 @@
     const card = document.getElementById('card');
     const toggleBtn = document.getElementById('toggleBtn');
     const giftBtn = document.getElementById('giftBtn');
+
     function setOpen(open){
       card.classList.toggle('open', open);
       card.setAttribute('aria-pressed', open?'true':'false');
@@ -121,6 +131,7 @@
         try{ createSparkles(18,'#fff7a8') }catch(e){}
       }
     }
+
     card.addEventListener('click', ()=> setOpen(!card.classList.contains('open')));
     toggleBtn.addEventListener('click', ()=> setOpen(!card.classList.contains('open')));
     giftBtn.addEventListener('click', ()=>{
@@ -132,95 +143,96 @@
     });
     card.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' ') setOpen(!card.classList.contains('open')) });
 
-    // Simple snowflakes using DOM elements
-    const flakes = 40;
-    for(let i=0;i<flakes;i++){
-      const el = document.createElement('div');
-      el.className='flake';
-      el.style.left = Math.random()*100 + 'vw';
-      el.style.opacity = (0.3 + Math.random()*0.7).toFixed(2);
-      const size = 8 + Math.random()*14;
-      el.style.fontSize = size + 'px';
-      el.textContent = '❄';
-      const duration = 8 + Math.random()*12;
-      el.style.transition = 'transform '+duration+'s linear';
-      document.body.appendChild(el);
-      // kickoff animation after slight delay
-      requestAnimationFrame(()=>{
-        const x = (Math.random()*30 - 15);
-        el.style.transform = `translate3d(${x}vw, 110vh, 0) rotate(${Math.random()*720}deg)`;
-      });
-      // reset loop
-      (function loop(el, duration){
-        setTimeout(()=>{
-          el.style.transition = 'none';
-          el.style.top = '-10px';
-          el.style.transform = 'translate3d(0,0,0)';
-          el.style.left = Math.random()*100 + 'vw';
-          // next frame reapply transition
-          requestAnimationFrame(()=>{
-            const x = (Math.random()*30 - 15);
-            el.style.transition = 'transform '+duration+'s linear';
-            el.style.transform = `translate3d(${x}vw, 110vh, 0) rotate(${Math.random()*720}deg)`;
-          });
-          loop(el, 6 + Math.random()*14);
-        }, (6+Math.random()*12)*1000);
-      })(el, 8 + Math.random()*12);
-    
-      // play a short chime using WebAudio
-      function playChime(){
-        const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        if(!AudioCtx) return;
-        const ctx = new AudioCtx();
-        const now = ctx.currentTime;
-        const o = ctx.createOscillator(); const g = ctx.createGain();
-        o.type = 'sine'; o.frequency.setValueAtTime(880, now);
-        g.gain.setValueAtTime(0.0001, now);
-        g.gain.linearRampToValueAtTime(0.12, now + 0.01);
-        g.gain.exponentialRampToValueAtTime(0.0001, now + 1.2);
-        o.connect(g); g.connect(ctx.destination);
-        o.start(now); o.stop(now + 1.2);
-        const o2 = ctx.createOscillator(); const g2 = ctx.createGain();
-        o2.type = 'triangle'; o2.frequency.setValueAtTime(1320, now);
-        g2.gain.setValueAtTime(0.0001, now);
-        g2.gain.linearRampToValueAtTime(0.06, now + 0.02);
-        g2.gain.exponentialRampToValueAtTime(0.0001, now + 1.4);
-        o2.connect(g2); g2.connect(ctx.destination);
-        o2.start(now); o2.stop(now + 1.4);
-      }
+    // Small helpers: play a short chime using WebAudio
+    function playChime(){
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if(!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const now = ctx.currentTime;
+      const o = ctx.createOscillator(); const g = ctx.createGain();
+      o.type = 'sine'; o.frequency.setValueAtTime(880, now);
+      g.gain.setValueAtTime(0.0001, now);
+      g.gain.linearRampToValueAtTime(0.12, now + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, now + 1.2);
+      o.connect(g); g.connect(ctx.destination);
+      o.start(now); o.stop(now + 1.2);
+      const o2 = ctx.createOscillator(); const g2 = ctx.createGain();
+      o2.type = 'triangle'; o2.frequency.setValueAtTime(1320, now);
+      g2.gain.setValueAtTime(0.0001, now);
+      g2.gain.linearRampToValueAtTime(0.06, now + 0.02);
+      g2.gain.exponentialRampToValueAtTime(0.0001, now + 1.4);
+      o2.connect(g2); g2.connect(ctx.destination);
+      o2.start(now); o2.stop(now + 1.4);
+    }
 
-      // create sparkles inside the card (temporary elements)
-      function createSparkles(count=16, color='#ffd166'){
-        const rect = card.getBoundingClientRect();
-        const container = document.createElement('div');
-        container.style.position = 'absolute'; container.style.left = 0; container.style.top = 0;
-        container.style.width = '100%'; container.style.height = '100%'; container.style.pointerEvents = 'none';
-        container.style.overflow = 'visible';
-        card.appendChild(container);
-        for(let i=0;i<count;i++){
-          const s = document.createElement('div');
-          s.className = 'mini-sparkle';
-          s.style.background = color;
-          // random start near center
-          const startX = rect.width*0.35 + Math.random()*rect.width*0.3;
-          const startY = rect.height*0.35 + Math.random()*rect.height*0.2;
-          s.style.left = startX + 'px'; s.style.top = startY + 'px';
-          s.style.width = (6 + Math.random()*10) + 'px';
-          s.style.height = s.style.width;
-          container.appendChild(s);
-          const dx = (Math.random()-0.5) * 120;
-          const dy = -(60 + Math.random()*140);
-          const rot = Math.random()*360;
-          s.animate([
-            { transform: `translate(0px,0px) rotate(0deg) scale(1)`, opacity: 1 },
-            { transform: `translate(${dx}px, ${dy}px) rotate(${rot}deg) scale(0.2)`, opacity: 0 }
-          ], { duration: 700 + Math.random()*900, easing: 'cubic-bezier(.2,.8,.2,1)' });
-        }
-        setTimeout(()=>{ container.remove() }, 2000);
+    // create sparkles inside the card (temporary elements)
+    function createSparkles(count=16, color='#ffd166'){
+      const rect = card.getBoundingClientRect();
+      const container = document.createElement('div');
+      container.style.position = 'absolute'; container.style.left = 0; container.style.top = 0;
+      container.style.width = '100%'; container.style.height = '100%'; container.style.pointerEvents = 'none';
+      container.style.overflow = 'visible';
+      card.appendChild(container);
+      for(let i=0;i<count;i++){
+        const s = document.createElement('div');
+        s.className = 'mini-sparkle';
+        s.style.background = color;
+        // random start near center
+        const startX = rect.width*0.35 + Math.random()*rect.width*0.3;
+        const startY = rect.height*0.35 + Math.random()*rect.height*0.2;
+        s.style.left = startX + 'px'; s.style.top = startY + 'px';
+        s.style.width = (6 + Math.random()*10) + 'px';
+        s.style.height = s.style.width;
+        container.appendChild(s);
+        const dx = (Math.random()-0.5) * 120;
+        const dy = -(60 + Math.random()*140);
+        const rot = Math.random()*360;
+        s.animate([
+          { transform: `translate(0px,0px) rotate(0deg) scale(1)`, opacity: 1 },
+          { transform: `translate(${dx}px, ${dy}px) rotate(${rot}deg) scale(0.2)`, opacity: 0 }
+        ], { duration: 700 + Math.random()*900, easing: 'cubic-bezier(.2,.8,.2,1)' });
+      }
+      setTimeout(()=>{ container.remove() }, 2000);
+    }
+
+    // Simple snowflakes using DOM elements (disabled if user prefers reduced motion)
+    if(!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)){
+      const flakes = 40;
+      for(let i=0;i<flakes;i++){
+        const el = document.createElement('div');
+        el.className='flake';
+        el.style.left = Math.random()*100 + 'vw';
+        el.style.opacity = (0.3 + Math.random()*0.7).toFixed(2);
+        const size = 8 + Math.random()*14;
+        el.style.fontSize = size + 'px';
+        el.textContent = '❄';
+        const duration = 8 + Math.random()*12;
+        el.style.transition = 'transform '+duration+'s linear';
+        document.body.appendChild(el);
+        // kickoff animation after slight delay
+        requestAnimationFrame(()=>{
+          const x = (Math.random()*30 - 15);
+          el.style.transform = `translate3d(${x}vw, 110vh, 0) rotate(${Math.random()*720}deg)`;
+        });
+        // reset loop
+        (function loop(el, duration){
+          setTimeout(()=>{
+            el.style.transition = 'none';
+            el.style.top = '-10px';
+            el.style.transform = 'translate3d(0,0,0)';
+            el.style.left = Math.random()*100 + 'vw';
+            // next frame reapply transition
+            requestAnimationFrame(()=>{
+              const x = (Math.random()*30 - 15);
+              el.style.transition = 'transform '+duration+'s linear';
+              el.style.transform = `translate3d(${x}vw, 110vh, 0) rotate(${Math.random()*720}deg)`;
+            });
+            loop(el, 6 + Math.random()*14);
+          }, (6+Math.random()*12)*1000);
+        })(el, 8 + Math.random()*12);
       }
     }
   </script>
 
 </body>
-</html>    .front .hint{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);color:#9e9e9e;font-size:14px}    .front .subtitle{margin-top:8px;color:var(--muted);font-weight:400}    .front .title{font-size:44px;font-weight:700;letter-spacing:0.6px}    .front{display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#fff 0%, #fff7f2 60%);color:var(--accent)}
-    /* front */    .side{position:absolute;inset:0;border-radius:18px;overflow:hidden;backface-visibility:hidden;box-shadow:0 30px 60px rgba(2,6,23,0.6)}
+</html>
